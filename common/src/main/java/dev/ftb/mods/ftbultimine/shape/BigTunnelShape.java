@@ -40,7 +40,7 @@ public class BigTunnelShape implements Shape {
                 }
             }
             if (list.size() == size) {
-                break; // none of the blocks in the 3x3 could be mined: stop
+                break; // none of the blocks in the 5x5 could be mined: stop
             }
             basePos = basePos.relative(context.face().getOpposite());
             depth++;

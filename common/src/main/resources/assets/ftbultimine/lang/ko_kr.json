@@ -7,5 +7,7 @@
 	"ftbultimine.shape.small_tunnel": "작은 굴",
 	"ftbultimine.shape.small_square": "작은 정사각형",
 	"ftbultimine.shape.mining_tunnel": "채광 굴",
-	"ftbultimine.shape.escape_tunnel": "탈출 굴"
+	"ftbultimine.shape.escape_tunnel": "탈출 굴",
+	"ftbultimine.shape.big_tunnel": "빅 터널 (5x5)",
+	"ftbultimine.shape.big_square": "빅 스퀘어 (5x5)"
 }
