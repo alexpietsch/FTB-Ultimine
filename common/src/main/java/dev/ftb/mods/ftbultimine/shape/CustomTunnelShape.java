@@ -28,7 +28,7 @@ public class CustomTunnelShape implements Shape {
                 for (int b = -halfHeight; b <= halfHeight; b++) {
                     if (depth > 0 || a != 0 || b != 0) {
                         BlockPos pos = switch (context.face().getAxis()) {
-                            case X -> basePos.offset(0, a, b);
+                            case X -> basePos.offset(0, b, a);
                             case Y -> basePos.offset(a, 0, b);
                             case Z -> basePos.offset(a, b, 0);
                         };
