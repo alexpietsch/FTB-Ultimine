@@ -104,6 +104,8 @@ public class FTBUltimine {
 		ShapeRegistry.register(new LargeTunnelShape());
 		ShapeRegistry.register(new MiningTunnelShape());
 		ShapeRegistry.register(new EscapeTunnelShape());
+		ShapeRegistry.register(new BigTunnelShape());
+		ShapeRegistry.register(new BigSquareShape());
 
 		PlayerEvent.PLAYER_JOIN.register(this::playerJoined);
 		LifecycleEvent.SERVER_BEFORE_START.register(this::serverStarting);
