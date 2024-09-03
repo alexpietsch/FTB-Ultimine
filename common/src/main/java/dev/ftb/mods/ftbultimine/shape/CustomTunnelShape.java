@@ -1,14 +1,15 @@
 package dev.ftb.mods.ftbultimine.shape;
 
+import dev.ftb.mods.ftbultimine.config.FTBUltimineServerConfig;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BigTunnelShape implements Shape {
+public class CustomTunnelShape implements Shape {
     @Override
     public String getName() {
-        return "big_tunnel";
+        return "custom_tunnel";
     }
 
     @Override
@@ -21,8 +22,10 @@ public class BigTunnelShape implements Shape {
 
         while (depth < maxDepth() && list.size() < context.maxBlocks()) {
             int size = list.size();
-            LAYER: for (int a = -2; a <= 2; a++) {
-                for (int b = -2; b <= 2; b++) {
+            int halfWidth = FTBUltimineServerConfig.CUSTOM_RECTANGLE_WIDTH.get() / 2;
+            int halfHeight = FTBUltimineServerConfig.CUSTOM_RECTANGLE_HEIGHT.get() / 2;
+            LAYER: for (int a = -halfWidth; a <= halfWidth; a++) {
+                for (int b = -halfHeight; b <= halfHeight; b++) {
                     if (depth > 0 || a != 0 || b != 0) {
                         BlockPos pos = switch (context.face().getAxis()) {
                             case X -> basePos.offset(0, a, b);
@@ -40,7 +43,7 @@ public class BigTunnelShape implements Shape {
                 }
             }
             if (list.size() == size) {
-                break; // none of the blocks in the 3x3 could be mined: stop
+                break; // none of the blocks could be mined: stop
             }
             basePos = basePos.relative(context.face().getOpposite());
             depth++;

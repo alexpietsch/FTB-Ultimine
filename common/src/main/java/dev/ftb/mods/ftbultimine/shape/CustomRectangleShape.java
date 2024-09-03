@@ -1,9 +1,9 @@
 package dev.ftb.mods.ftbultimine.shape;
 
-public class BigSquareShape extends BigTunnelShape {
+public class CustomRectangleShape extends CustomTunnelShape {
 	@Override
 	public String getName() {
-		return "big_square";
+		return "custom_rectangle";
 	}
 
 	@Override
