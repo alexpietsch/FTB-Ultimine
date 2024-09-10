@@ -21,7 +21,10 @@ import dev.ftb.mods.ftbultimine.config.FTBUltimineServerConfig;
 import dev.ftb.mods.ftbultimine.event.LevelRenderLastEvent;
 import dev.ftb.mods.ftbultimine.net.KeyPressedPacket;
 import dev.ftb.mods.ftbultimine.net.ModeChangedPacket;
+import dev.ftb.mods.ftbultimine.net.SendSizePacket;
+import dev.ftb.mods.ftbultimine.net.SizeChangedPacket;
 import dev.ftb.mods.ftbultimine.shape.ShapeRegistry;
+import dev.ftb.mods.ftbultimine.size.CustomSizes;
 import dev.ftb.mods.ftbultimine.utils.ShapeMerger;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
@@ -60,6 +63,7 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 	private long lastToggle = 0;
 	public final int INPUT_DELAY = 125;
 	private int shapeIdx = 0;  // shape index of client player's current shape
+	private int sizeIdx = 0;
 
 	public FTBUltimineClient() {
 		KeyMappingRegistry.register(keyBinding = new KeyMapping("key.ftbultimine", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_GRAVE_ACCENT, "key.categories.ftbultimine"));
@@ -69,6 +73,7 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 
 		ClientTickEvent.CLIENT_PRE.register(this::clientTick);
 		ClientGuiEvent.RENDER_HUD.register(this::renderGameOverlay);
+		ClientGuiEvent.RENDER_HUD.register(this::renderGameOverlaySize);
 
 		// TODO: remove once #6 gets fixed
 		LevelRenderLastEvent.EVENT.register(this::renderInGame);
@@ -93,6 +98,11 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 		shapeBlocks = blocks.subList(0, maxRendered);
 		cachedEdges = null;
 		updateEdges();
+	}
+
+	@Override
+	public void setSize(int sizeIdx) {
+		this.sizeIdx = sizeIdx;
 	}
 
 	@Override
@@ -145,9 +155,15 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 	}
 
 	public EventResult mouseEvent(Minecraft client, double amount) {
-		if (pressed && amount != 0 && sneak()) {
+		if (pressed && amount != 0 && sneak() && !alt()) {
 			hasScrolled = true;
 			new ModeChangedPacket(amount < 0D).sendToServer();
+			return EventResult.interruptFalse();
+		}
+
+		if (pressed && amount != 0 && !sneak() && alt()) {
+			hasScrolled = true;
+			new SizeChangedPacket(amount < 0D).sendToServer();
 			return EventResult.interruptFalse();
 		}
 
@@ -163,7 +179,13 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 			return EventResult.pass();
 		}
 
-		if (!pressed || !sneak()) {
+		if (!pressed || !sneak() || !alt()) {
+			return EventResult.pass();
+		}
+
+		if(pressed && alt()){
+			new SizeChangedPacket(true).sendToServer();
+			System.out.println("ONKEYPRESS");
 			return EventResult.pass();
 		}
 
@@ -177,6 +199,12 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 		if (!FTBUltimineClientConfig.requireSneakForMenu.get()) return true;
 
 		return keyBinding.key.getValue() == GLFW.GLFW_KEY_LEFT_SHIFT || keyBinding.key.getValue() == GLFW.GLFW_KEY_RIGHT_SHIFT ? Screen.hasControlDown() : Screen.hasShiftDown();
+	}
+
+	private boolean alt() {
+//		if (!FTBUltimineClientConfig.requireSneakForMenu.get()) return true;
+
+		return keyBinding.key.getValue() == GLFW.GLFW_KEY_LEFT_ALT || keyBinding.key.getValue() == GLFW.GLFW_KEY_RIGHT_ALT ? Screen.hasControlDown() : Screen.hasAltDown();
 	}
 
 	private void addPressedInfo(List<MutableComponent> list) {
@@ -266,6 +294,47 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 					graphics.fill(1, top - 1, 2 + minecraft.font.width(formatted) + 1, top + minecraft.font.lineHeight - 1, 0xAA_2E3440);
 				}
 				graphics.drawString(minecraft.font, formatted, 2, top, 0xECEFF4, true);
+				top += minecraft.font.lineHeight;
+				first = false;
+			}
+		}
+	}
+
+	public void renderGameOverlaySize(GuiGraphics graphics, float tickDelta) {
+
+		if (pressed && Screen.hasAltDown()) {
+			RenderSystem.enableBlend();
+			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+
+			List<MutableComponent> list = new ArrayList<>();
+
+			int context = Math.min((7 - 1) / 2, FTBUltimineClientConfig.shapeMenuContextLines.get());
+
+			list.add(Component.literal(""));
+			for (int i = -context; i < 0; i++) {
+				String prefix = i == -context ? "^ " : " | ";
+				list.add(Component.literal(prefix).withStyle(ChatFormatting.GRAY)
+						.append(String.valueOf(CustomSizes.getSize(i))));
+			}
+
+
+			Minecraft minecraft = Minecraft.getInstance();
+
+			int top = 100 + minecraft.font.lineHeight * infoOffset;
+			boolean first = true;
+			for (MutableComponent msg : list) {
+				FormattedCharSequence formatted = msg.getVisualOrderText();
+				if (first) {
+					float f = CooldownTracker.getCooldownRemaining(getClientPlayer());
+					if (f < 1f) {
+						graphics.fill(1, top - 1, 2 + (int)(minecraft.font.width(formatted) * f) + 1, top + minecraft.font.lineHeight - 1, 0xAA_2E3440);
+					} else {
+						graphics.fill(1, top - 1, 2 + minecraft.font.width(formatted) + 1, top + minecraft.font.lineHeight - 1, 0xAA_2E3440);
+					}
+				} else {
+					graphics.fill(1, top - 1, 2 + minecraft.font.width(formatted) + 1, top + minecraft.font.lineHeight - 1, 0xAA_2E3440);
+				}
+				graphics.drawString(minecraft.font, formatted, 50, top, 0xECEFF4, true);
 				top += minecraft.font.lineHeight;
 				first = false;
 			}

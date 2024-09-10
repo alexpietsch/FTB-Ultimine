@@ -17,6 +17,8 @@ public interface FTBUltimineNet {
 	MessageType SYNC_CONFIG_TO_SERVER = NET.registerC2S("sync_config_to_server", SyncConfigToServerPacket::new);
 	MessageType EDIT_CONFIG = NET.registerS2C("edit_config", EditConfigPacket::new);
 	MessageType SYNC_ULTIMINE_TIME = NET.registerS2C("sync_ultimine_time", SyncUltimineTimePacket::new);
+	MessageType SIZE_CHANGED = NET.registerC2S("size_changed", SizeChangedPacket::new);
+	MessageType SEND_SIZE = NET.registerS2C("send_size", SendSizePacket::new);
 
 	static void init() {
 	}

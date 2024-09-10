@@ -6,6 +6,7 @@ import dev.ftb.mods.ftbultimine.shape.BlockMatcher;
 import dev.ftb.mods.ftbultimine.shape.Shape;
 import dev.ftb.mods.ftbultimine.shape.ShapeContext;
 import dev.ftb.mods.ftbultimine.shape.ShapeRegistry;
+import dev.ftb.mods.ftbultimine.size.CustomSizes;
 import dev.ftb.mods.ftbultimine.utils.PlatformMethods;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
@@ -28,7 +29,10 @@ public class FTBUltiminePlayerData {
 	private final UUID playerId;
 	private boolean pressed = false;
 	private int shapeIndex = 0;
+	private int sizeIndex = 0;
 	private double pendingXPCost;
+
+	List<Integer> sizes = List.of(3,5,7,9,11,13,15);
 
 	private BlockPos cachedPos;
 	private Direction cachedDirection;
@@ -77,6 +81,10 @@ public class FTBUltiminePlayerData {
 		return shapeIndex;
 	}
 
+	public int getCurrentSizeIndex() {
+		return sizeIndex;
+	}
+
 	public void cycleShape(boolean next) {
 		if (next) {
 			if (++shapeIndex >= ShapeRegistry.shapeCount()) {
@@ -85,6 +93,18 @@ public class FTBUltiminePlayerData {
 		} else {
 			if (--shapeIndex < 0) {
 				shapeIndex = ShapeRegistry.shapeCount() - 1;
+			}
+		}
+	}
+
+	public void cycleSize(boolean next) {
+		if (next) {
+			if (++sizeIndex >= CustomSizes.sizesCount()) {
+				sizeIndex = 0;
+			}
+		} else {
+			if (--sizeIndex < 0) {
+				sizeIndex = CustomSizes.sizesCount() - 1;
 			}
 		}
 	}

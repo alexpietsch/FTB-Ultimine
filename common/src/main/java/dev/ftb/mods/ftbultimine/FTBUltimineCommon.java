@@ -11,6 +11,9 @@ public class FTBUltimineCommon {
 	public void setShape(int shapeIdx, List<BlockPos> blocks) {
 	}
 
+    public void setSize(int sizeIdx) {
+    }
+
     public void editConfig(boolean isClientConfig) {
     }
 }

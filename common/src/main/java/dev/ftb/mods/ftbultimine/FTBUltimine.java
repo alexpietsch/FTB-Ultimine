@@ -13,10 +13,7 @@ import dev.ftb.mods.ftbultimine.config.FTBUltimineCommonConfig;
 import dev.ftb.mods.ftbultimine.config.FTBUltimineServerConfig;
 import dev.ftb.mods.ftbultimine.integration.FTBRanksIntegration;
 import dev.ftb.mods.ftbultimine.integration.FTBUltiminePlugins;
-import dev.ftb.mods.ftbultimine.net.FTBUltimineNet;
-import dev.ftb.mods.ftbultimine.net.SendShapePacket;
-import dev.ftb.mods.ftbultimine.net.SyncConfigFromServerPacket;
-import dev.ftb.mods.ftbultimine.net.SyncUltimineTimePacket;
+import dev.ftb.mods.ftbultimine.net.*;
 import dev.ftb.mods.ftbultimine.net.SyncUltimineTimePacket.TimeType;
 import dev.ftb.mods.ftbultimine.shape.*;
 import net.minecraft.core.BlockPos;
@@ -149,6 +146,13 @@ public class FTBUltimine {
 		data.cycleShape(next);
 		data.clearCache();
 		new SendShapePacket(data.getCurrentShapeIndex(), Collections.emptyList()).sendTo(player);
+	}
+
+	public void sizeChanged(ServerPlayer player, boolean next) {
+		FTBUltiminePlayerData data = getOrCreatePlayerData(player);
+		data.cycleSize(next);
+		System.out.println(String.format("sizeChanged, new "));
+		new SendSizePacket(data.getCurrentSizeIndex(), Collections.emptyList()).sendTo(player);
 	}
 
 	/**
