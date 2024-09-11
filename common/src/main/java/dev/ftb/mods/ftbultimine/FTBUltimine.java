@@ -16,6 +16,7 @@ import dev.ftb.mods.ftbultimine.integration.FTBUltiminePlugins;
 import dev.ftb.mods.ftbultimine.net.*;
 import dev.ftb.mods.ftbultimine.net.SyncUltimineTimePacket.TimeType;
 import dev.ftb.mods.ftbultimine.shape.*;
+import dev.ftb.mods.ftbultimine.size.CustomSizes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -150,8 +151,10 @@ public class FTBUltimine {
 
 	public void sizeChanged(ServerPlayer player, boolean next) {
 		FTBUltiminePlayerData data = getOrCreatePlayerData(player);
-		data.cycleSize(next);
-		System.out.println(String.format("sizeChanged, new "));
+		int sizeIdx = data.cycleSize(next);
+		data.clearCache();
+		FTBUltimineServerConfig.CUSTOM_RECTANGLE_SIZE.set(CustomSizes.getSize(sizeIdx));
+		System.out.println(String.format("sizeChanged"));
 		new SendSizePacket(data.getCurrentSizeIndex(), Collections.emptyList()).sendTo(player);
 	}
 

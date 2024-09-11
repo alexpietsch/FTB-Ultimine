@@ -23,6 +23,10 @@ public class CustomSizes {
         return idx >= 0 && idx < SIZES.size() ? SIZES.get(idx) : defaultSize;
     }
 
+    public static List<Integer> getSizes() {
+        return SIZES;
+    }
+
     public static Integer sizesCount(){
         return SIZES.size();
     }

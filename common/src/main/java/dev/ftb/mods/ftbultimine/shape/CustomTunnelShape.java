@@ -22,13 +22,13 @@ public class CustomTunnelShape implements Shape {
 
         while (depth < maxDepth() && list.size() < context.maxBlocks()) {
             int size = list.size();
-            int halfWidth = FTBUltimineServerConfig.CUSTOM_RECTANGLE_WIDTH.get() / 2;
-            int halfHeight = FTBUltimineServerConfig.CUSTOM_RECTANGLE_HEIGHT.get() / 2;
-            LAYER: for (int a = -halfWidth; a <= halfWidth; a++) {
-                for (int b = -halfHeight; b <= halfHeight; b++) {
+            int halfSize = FTBUltimineServerConfig.CUSTOM_RECTANGLE_SIZE.get() / 2;
+
+            LAYER: for (int a = -halfSize; a <= halfSize; a++) {
+                for (int b = -halfSize; b <= halfSize; b++) {
                     if (depth > 0 || a != 0 || b != 0) {
                         BlockPos pos = switch (context.face().getAxis()) {
-                            case X -> basePos.offset(0, b, a);
+                            case X -> basePos.offset(0, a, b);
                             case Y -> basePos.offset(a, 0, b);
                             case Z -> basePos.offset(a, b, 0);
                         };
@@ -43,7 +43,7 @@ public class CustomTunnelShape implements Shape {
                 }
             }
             if (list.size() == size) {
-                break; // none of the blocks could be mined: stop
+                break; // none of the blocks in the 3x3 could be mined: stop
             }
             basePos = basePos.relative(context.face().getOpposite());
             depth++;

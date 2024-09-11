@@ -1,15 +1,11 @@
 package dev.ftb.mods.ftbultimine.shape;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-/**
- * @author LatvianModder
- */
 public interface Shape {
 	String getName();
 
@@ -17,5 +13,9 @@ public interface Shape {
 
 	default BlockMatcher getTagMatcher() {
 		return BlockMatcher.TAGS_MATCH_SHAPED;
+	}
+
+	default MutableComponent getDisplayName() {
+		return Component.translatable("ftbultimine.shape." + getName());
 	}
 }

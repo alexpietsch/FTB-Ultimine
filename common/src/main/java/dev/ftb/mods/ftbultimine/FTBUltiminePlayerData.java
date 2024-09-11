@@ -97,7 +97,7 @@ public class FTBUltiminePlayerData {
 		}
 	}
 
-	public void cycleSize(boolean next) {
+	public int cycleSize(boolean next) {
 		if (next) {
 			if (++sizeIndex >= CustomSizes.sizesCount()) {
 				sizeIndex = 0;
@@ -107,6 +107,7 @@ public class FTBUltiminePlayerData {
 				sizeIndex = CustomSizes.sizesCount() - 1;
 			}
 		}
+		return sizeIndex;
 	}
 
 	public void addPendingXPCost(int blockCount) {

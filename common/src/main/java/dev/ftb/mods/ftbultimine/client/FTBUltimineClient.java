@@ -23,6 +23,7 @@ import dev.ftb.mods.ftbultimine.net.KeyPressedPacket;
 import dev.ftb.mods.ftbultimine.net.ModeChangedPacket;
 import dev.ftb.mods.ftbultimine.net.SendSizePacket;
 import dev.ftb.mods.ftbultimine.net.SizeChangedPacket;
+import dev.ftb.mods.ftbultimine.shape.Shape;
 import dev.ftb.mods.ftbultimine.shape.ShapeRegistry;
 import dev.ftb.mods.ftbultimine.size.CustomSizes;
 import dev.ftb.mods.ftbultimine.utils.ShapeMerger;
@@ -161,7 +162,7 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 			return EventResult.interruptFalse();
 		}
 
-		if (pressed && amount != 0 && !sneak() && alt()) {
+		if (pressed && amount != 0 && !sneak() && alt() && customShapeSelected()) {
 			hasScrolled = true;
 			new SizeChangedPacket(amount < 0D).sendToServer();
 			return EventResult.interruptFalse();
@@ -185,7 +186,6 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 
 		if(pressed && alt()){
 			new SizeChangedPacket(true).sendToServer();
-			System.out.println("ONKEYPRESS");
 			return EventResult.pass();
 		}
 
@@ -302,19 +302,32 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 
 	public void renderGameOverlaySize(GuiGraphics graphics, float tickDelta) {
 
-		if (pressed && Screen.hasAltDown()) {
+		if (pressed && Screen.hasAltDown() && customShapeSelected()) {
 			RenderSystem.enableBlend();
 			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
 			List<MutableComponent> list = new ArrayList<>();
 
-			int context = Math.min((7 - 1) / 2, FTBUltimineClientConfig.shapeMenuContextLines.get());
+			int context = Math.min((ShapeRegistry.shapeCount() - 1) / 2, FTBUltimineClientConfig.shapeMenuContextLines.get());
 
-			list.add(Component.literal(""));
-			for (int i = -context; i < 0; i++) {
-				String prefix = i == -context ? "^ " : " | ";
-				list.add(Component.literal(prefix).withStyle(ChatFormatting.GRAY)
-						.append(String.valueOf(CustomSizes.getSize(i))));
+			if (alt()) {
+				for (int i = -context; i < 0; i++) {
+					String prefix = i == -context ? "^ " : " | ";
+					list.add(Component.literal(prefix).withStyle(ChatFormatting.GRAY)
+							.append(CustomSizes.getSize(sizeIdx + i).toString()));
+				}
+			}
+
+			list.add(Component.literal("- ")
+					.append(CustomSizes.getSize(sizeIdx).toString()));
+
+
+			if (alt()) {
+				for (int i = 1; i <= context; i++) {
+					String prefix = i == context ? "v " : " | ";
+					list.add(Component.literal(prefix).withStyle(ChatFormatting.GRAY)
+							.append(CustomSizes.getSize(sizeIdx + i).toString()));
+				}
 			}
 
 
@@ -334,7 +347,7 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 				} else {
 					graphics.fill(1, top - 1, 2 + minecraft.font.width(formatted) + 1, top + minecraft.font.lineHeight - 1, 0xAA_2E3440);
 				}
-				graphics.drawString(minecraft.font, formatted, 50, top, 0xECEFF4, true);
+				graphics.drawString(minecraft.font, formatted, 5, top, 0xECEFF4, true);
 				top += minecraft.font.lineHeight;
 				first = false;
 			}
@@ -393,5 +406,10 @@ public class FTBUltimineClient extends FTBUltimineCommon {
 			combinedShape = Shapes.joinUnoptimized(combinedShape, shape, BooleanOp.OR);
 		}
 		return combinedShape;
+	}
+
+	private boolean customShapeSelected() {
+		return Objects.equals(ShapeRegistry.getShape(shapeIdx).getName(), "custom_rectangle")
+				|| Objects.equals(ShapeRegistry.getShape(shapeIdx).getName(), "custom_tunnel");
 	}
 }
