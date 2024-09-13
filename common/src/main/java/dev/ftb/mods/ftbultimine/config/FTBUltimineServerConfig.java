@@ -81,9 +81,6 @@ public interface FTBUltimineServerConfig {
 	LongValue ULTIMINE_COOLDOWN = CONFIG.addLong("ultimine_cooldown", 0L, 0L, Long.MAX_VALUE)
 			.comment("Cooldown in ticks between successive uses of the ultimine feature");
 
-	EnumValue<Integer> CUSTOM_RECTANGLE_SIZE = CONFIG.addEnum("custom_rectangle_size", NameMap.of(CustomSizes.getSize(0), CustomSizes.getSizes()).create())
-			.comment("Size for the custom rectangle.");
-
 //	BooleanValue USE_TRINKET = CONFIG.addBoolean("use_trinket", false)
 //			.comment("(This only works if the mod 'Lost Trinkets' is installed!)",
 //					"Adds a custom 'Ultiminer' trinket players will need to activate to be able to use Ultimine.",

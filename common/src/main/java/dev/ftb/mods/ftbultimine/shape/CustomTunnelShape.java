@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftbultimine.shape;
 
+import dev.ftb.mods.ftbultimine.config.FTBUltimineClientConfig;
 import dev.ftb.mods.ftbultimine.config.FTBUltimineServerConfig;
 import net.minecraft.core.BlockPos;
 
@@ -22,7 +23,7 @@ public class CustomTunnelShape implements Shape {
 
         while (depth < maxDepth() && list.size() < context.maxBlocks()) {
             int size = list.size();
-            int halfSize = FTBUltimineServerConfig.CUSTOM_RECTANGLE_SIZE.get() / 2;
+            int halfSize = FTBUltimineClientConfig.CUSTOM_RECTANGLE_SIZE.get() / 2;
 
             LAYER: for (int a = -halfSize; a <= halfSize; a++) {
                 for (int b = -halfSize; b <= halfSize; b++) {

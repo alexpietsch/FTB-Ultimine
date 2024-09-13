@@ -2,9 +2,12 @@ package dev.ftb.mods.ftbultimine.config;
 
 import dev.architectury.platform.Platform;
 import dev.ftb.mods.ftblibrary.config.ConfigGroup;
+import dev.ftb.mods.ftblibrary.config.NameMap;
 import dev.ftb.mods.ftblibrary.snbt.config.BooleanValue;
+import dev.ftb.mods.ftblibrary.snbt.config.EnumValue;
 import dev.ftb.mods.ftblibrary.snbt.config.IntValue;
 import dev.ftb.mods.ftblibrary.snbt.config.SNBTConfig;
+import dev.ftb.mods.ftbultimine.size.CustomSizes;
 
 import static dev.ftb.mods.ftblibrary.snbt.config.ConfigUtil.LOCAL_DIR;
 import static dev.ftb.mods.ftblibrary.snbt.config.ConfigUtil.loadDefaulted;
@@ -33,6 +36,9 @@ public interface FTBUltimineClientConfig {
 			.range(0, Integer.MAX_VALUE)
 			.comment("Maximum number of blocks the white outline should be rendered for",
 					"Keep in mind this may get *very* laggy for large amounts of blocks!");
+
+	EnumValue<Integer> CUSTOM_RECTANGLE_SIZE = CONFIG.addEnum("custom_rectangle_size", NameMap.of(CustomSizes.getSize(0), CustomSizes.getSizes()).create())
+			.comment("Size for the custom rectangle.");
 
 	static void load() {
 		loadDefaulted(CONFIG, LOCAL_DIR, MOD_ID);

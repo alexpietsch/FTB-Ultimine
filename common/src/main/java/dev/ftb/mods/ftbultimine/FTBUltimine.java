@@ -9,6 +9,7 @@ import dev.architectury.utils.EnvExecutor;
 import dev.architectury.utils.value.IntValue;
 import dev.ftb.mods.ftblibrary.snbt.SNBTCompoundTag;
 import dev.ftb.mods.ftbultimine.client.FTBUltimineClient;
+import dev.ftb.mods.ftbultimine.config.FTBUltimineClientConfig;
 import dev.ftb.mods.ftbultimine.config.FTBUltimineCommonConfig;
 import dev.ftb.mods.ftbultimine.config.FTBUltimineServerConfig;
 import dev.ftb.mods.ftbultimine.integration.FTBRanksIntegration;
@@ -153,8 +154,7 @@ public class FTBUltimine {
 		FTBUltiminePlayerData data = getOrCreatePlayerData(player);
 		int sizeIdx = data.cycleSize(next);
 		data.clearCache();
-		FTBUltimineServerConfig.CUSTOM_RECTANGLE_SIZE.set(CustomSizes.getSize(sizeIdx));
-		System.out.println(String.format("sizeChanged"));
+		FTBUltimineClientConfig.CUSTOM_RECTANGLE_SIZE.set(CustomSizes.getSize(sizeIdx));
 		new SendSizePacket(data.getCurrentSizeIndex(), Collections.emptyList()).sendTo(player);
 	}
 
