@@ -21,6 +21,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Math;
 
 import java.util.Objects;
 
@@ -42,37 +43,5 @@ public class FTBUltimineCommands {
                         })
                 )
         );
-        dispatcher.register(Commands.literal("debug:reset")
-                .executes(FTBUltimineCommands::fillFixedArea));
-    }
-
-    private static int fillFixedArea(CommandContext<CommandSourceStack> context) {
-        Level world = context.getSource().getLevel();
-
-        // Define the two corners of the area to fill with stone
-        BlockPos pos1 = new BlockPos(-35, 70, -131);
-        BlockPos pos2 = new BlockPos(2, 53, -101);
-
-
-        // Calculate the minimum and maximum coordinates
-        int minX = Math.min(pos1.getX(), pos2.getX());
-        int minY = Math.min(pos1.getY(), pos2.getY());
-        int minZ = Math.min(pos1.getZ(), pos2.getZ());
-        int maxX = Math.max(pos1.getX(), pos2.getX());
-        int maxY = Math.max(pos1.getY(), pos2.getY());
-        int maxZ = Math.max(pos1.getZ(), pos2.getZ());
-
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    BlockPos currentPos = new BlockPos(x, y, z);
-                    world.setBlock(currentPos, Blocks.STONE.defaultBlockState(), 3);
-                }
-            }
-        }
-
-        // Notify the player that the area was filled with stone
-        context.getSource().sendSuccess(() -> Component.nullToEmpty("Filled area from -35, 70, -131 to 2, 53, -101 with stone!"), true);
-        return 1; // Command success
     }
 }
